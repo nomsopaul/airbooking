@@ -48,7 +48,7 @@ export const getFlights = async (req, res, next) => {
   try {
     const flights = await Flight.find({ 
       ...others,
-       cheapestPrice: { $gt: min | 1, $lt: max || 999},
+       cheapestPrice: { $gt: min | 0, $lt: max || 999},
        }).limit(req.query.limit);
     res.status (200).json(flights);
   } catch (err) {
@@ -85,5 +85,19 @@ export const countByType = async (req, res, next) => {
     ]);
   } catch (err) {
     next (err);
+  }
+};
+
+
+export const getFlightSeats = async(req, res, next) => {
+  try{
+    const flight = await Flight.findById(req.params.id)
+    const list = await Promise.all(flight.seats.map((seat) => {
+      return Seat.findById(seat);
+    })
+  );
+  res.status(200).json(list)
+  } catch (err) {
+    next(err)
   }
 };

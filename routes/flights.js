@@ -7,8 +7,8 @@ import {
   getFlight,
   countByCity,
   countByType,
+  getFlightSeats,
 } from '../controllers/flight.js';
-import Flight from "../modals/Flight.js"
 import {verifyAdmin} from "../utils/verifyToken.js"
 
 const router = express.Router ();
@@ -27,5 +27,6 @@ router.get ('/', getFlights);
 
 router.get("/countByCity", countByCity);
 router.get("/countByType", countByType);
+router.get("/seat/:id", getFlightSeats);
 
 export default router;

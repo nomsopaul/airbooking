@@ -9,12 +9,11 @@ export const register = async (req, res, next) => {
     const hash = bcrypt.hashSync (req.body.password, salt);
 
     const newUser = new User ({
-      username: req.body.username,
-      email: req.body.email,
+      ...req.body,
       password: hash,
     });
     await newUser.save ();
-    res.status (201).send ('User has been created successfully');
+    res.status (201).send ('User has been created!');
   } catch (err) {
     next (err);
   }
@@ -32,7 +31,10 @@ export const login = async (req, res, next) => {
     if (!isPasswordCorrect)
       return next(createError(400, "Wrong password or username!"));
 
-      const token = jwt.sign({id:user._id, isAdmin: user.isAdmin }, process.env.JWT);
+      const token = jwt.sign(
+        {id:user._id, isAdmin: user.isAdmin },
+        process.env.JWT
+        );
 
     const {password, isAdmin, ...otherDetails} = user._doc;
     res
@@ -40,7 +42,7 @@ export const login = async (req, res, next) => {
         httpOnly: true,
     })
     .status (200)
-    .json ({...otherDetails});
+    .json ({ details: {...otherDetails}, isAdmin });
   } catch (err) {
     next (err);
   }

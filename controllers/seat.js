@@ -22,6 +22,22 @@ export const createSeat = async (req, res, next) => {
 
 export const updateSeat = async (req,res,next) => {
     try{
+        await Seat.updateOne(
+            {"seatNumbers._id": req.params.id },
+            {
+                $push: {
+                    "seatNumbers.$.unavailableDates": req.body.dates
+                },
+            }
+        );
+    res.status(200).json("Seat status has been updated.");
+        } catch (err) {
+            next(err);
+        }
+};
+
+export const updateSeatAvailability = async (req,res,next) => {
+    try{
         const updatedSeat = await Seat.findByIdAndUpdate(
             req.params.id,
             {$set: req.body },
@@ -62,9 +78,9 @@ export const getSeat = async (req,res,next) => {
 
 export const getSeats = async (req, res, next) => {
     try{
-        const rooms = await Room.find();
+        const rooms = await Seat.find();
         res.status (200).json (rooms);
     } catch (err) {
         next(err);
     }
-}
+};
